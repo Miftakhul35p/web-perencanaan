@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miftakhul - FTTH Planner</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap');
+
+        :root {
+            --bg-color: #0a0b10;
+            --panel-bg: #12131a;
+            --cyan: #00f0ff;
+            --magenta: #ff0055;
+            --yellow: #ffee00;
+            --text-main: #e2e8f0;
+            --text-muted: #718096;
+            --border-color: #1f2330;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            padding: 30px 20px;
+            background-image: radial-gradient(circle at 50% 50%, #ff005510 0%, transparent 80%),
+                              radial-gradient(circle at 10% 20%, #00f0ff08 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--panel-bg);
+            border: 2px solid var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.05);
+            padding: 35px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: var(--magenta);
+            box-shadow: 0 0 10px var(--magenta);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 25px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            font-size: 24pt;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: var(--magenta);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10pt;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .meta-field {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .meta-field label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9pt;
+            color: var(--cyan);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .meta-field input {
+            background: #07080c;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 8px 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11pt;
+            font-weight: 600;
+        }
+
+        .meta-field input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+        }
+
+        .section-panel {
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            position: relative;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--magenta);
+            padding-left: 12px;
+        }
+
+        .section-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13pt;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9pt;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--cyan);
+            background: rgba(0, 240, 255, 0.02);
+        }
+
+        td {
+            padding: 8px 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: middle;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            background: #171923;
+            border: 1px solid #2d3748;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 11pt;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--cyan);
+            background: #1d2130;
+        }
+
+        .btn {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 9pt;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .btn-add {
+            background: transparent;
+            color: var(--cyan);
+            border-color: var(--cyan);
+        }
+
+        .btn-add:hover {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: var(--magenta);
+            border-color: rgba(255, 0, 85, 0.3);
+            padding: 6px 10px;
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 0, 85, 0.1);
+            border-color: var(--magenta);
+        }
+
+        .summary-wrapper {
+            margin-top: 40px;
+            border-top: 2px solid var(--magenta);
+            padding-top: 25px;
+        }
+
+        .summary-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14pt;
+            color: var(--yellow);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(255, 238, 0, 0.3);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: #0f111a;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 2px;
+        }
+
+        .summary-card-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9pt;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .summary-card-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13pt;
+            color: #fff;
+        }
+
+        .total-box {
+            background: rgba(255, 0, 85, 0.07);
+            border: 1px solid var(--magenta);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.1);
+        }
+
+        .total-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15pt;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .total-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20pt;
+            color: var(--yellow);
+            text-shadow: 0 0 10px rgba(255, 238, 0, 0.5);
+            font-weight: 700;
+        }
+
+        .action-bar {
+            text-align: center;
+            margin-top: 35px;
+        }
+
+        .btn-pdf, .btn-reset {
+            font-size: 12pt;
+            padding: 14px 35px;
+            border: none;
+            font-weight: 700;
+            margin: 0 10px;
+        }
+
+        .btn-pdf {
+            background: var(--cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-pdf:hover {
+            background: #fff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #2d3748;
+            color: #fff;
+            border: 1px solid #4a5568;
+        }
+
+        .btn-reset:hover {
+            background: var(--magenta);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* --- KELAS PERBAIKAN FORMAT CETAK PDF --- */
+        .print-mode {
+            background: #ffffff !important;
+            color: #000000 !important;
+            padding: 10px !important;
+            height: auto !important;
+            overflow: visible !important;
+            display: block !important;
+        }
+        .print-mode .container {
+            border: 2px solid #000000 !important;
+            box-shadow: none !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+        }
+        .print-mode h1, .print-mode .section-header h2, .print-mode .summary-title, .print-mode .total-label {
+            color: #000000 !important;
+            text-shadow: none !important;
+        }
+        .print-mode .subtitle {
+            color: #555555 !important;
+        }
+        .print-mode th {
+            color: #000000 !important;
+            border-bottom: 2px solid #000000 !important;
+            background: #f0f0f0 !important;
+        }
+        .print-mode td {
+            border-bottom: 1px solid #cccccc !important;
+        }
+        .print-mode input {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 1px solid #888888 !important;
+        }
+        .print-mode .btn, .print-mode .action-bar {
+            display: none !important;
+        }
+        .print-mode .summary-card {
+            background: #f9f9f9 !important;
+            border: 1px solid #cccccc !important;
+        }
+        .print-mode .summary-card-value {
+            color: #000000 !important;
+        }
+        .print-mode .total-box {
+            background: #f0f0f0 !important;
+            border: 2px solid #000000 !important;
+        }
+        .print-mode .total-value {
+            color: #000000 !important;
+            text-shadow: none !important;
+        }
+        .print-mode .meta-grid {
+            background: #f9f9f9 !important;
+            border: 1px solid #cccccc !important;
+        }
+        .print-mode .meta-field label {
+            color: #333333 !important;
+        }
+        .print-mode tr {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+        .print-mode .section-panel {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            background: transparent !important;
+            border: 1px solid #cccccc !important;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<div class="container" id="planner-app">
+    <header>
+        <h1>MIFTAKHUL</h1>
+        <div class="subtitle">FTTH Network Planner System v1.0</div>
+        
+        <div class="meta-grid">
+            <div class="meta-field">
+                <label>Nama Pembuat</label>
+                <input type="text" id="pembuat" value="Miftakhul">
+            </div>
+            <div class="meta-field">
+                <label>Tanggal Perencanaan</label>
+                <input type="text" id="tanggal">
+            </div>
+        </div>
+    </header>
+
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>[01] DATA TIANG</h2>
+            <button class="btn btn-add" onclick="addRow('table-tiang')">+ Tambah Tiang</button>
+        </div>
+        <table id="table-tiang">
+            <thead>
+                <tr>
+                    <th>Nama Tiang</th>
+                    <th>Lokasi</th>
+                    <th style="width: 250px;">Biaya (IDR)</th>
+                    <th style="width: 70px; text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" placeholder="Contoh: TNG-01"></td>
+                    <td><input type="text" placeholder="Koordinat / Nama Jalan"></td>
+                    <td><input type="number" class="cost-input cost-tiang" placeholder="0" value="0"></td>
+                    <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>[02] DATA KABEL</h2>
+            <button class="btn btn-add" onclick="addRow('table-kabel')">+ Tambah Kabel</button>
+        </div>
+        <table id="table-kabel">
+            <thead>
+                <tr>
+                    <th>Nama Kabel</th>
+                    <th>Titik Kabel</th>
+                    <th>Panjang (Meter)</th>
+                    <th style="width: 250px;">Biaya (IDR)</th>
+                    <th style="width: 70px; text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" placeholder="Contoh: FO-24C-CORE"></td>
+                    <td><input type="text" placeholder="Contoh: Tiang 01 - Tiang 05"></td>
+                    <td><input type="number" placeholder="0" value="0"></td>
+                    <td><input type="number" class="cost-input cost-kabel" placeholder="0" value="0"></td>
+                    <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>[03] DATA ODP (Optical Distribution Point)</h2>
+            <button class="btn btn-add" onclick="addRow('table-odp')">+ Tambah ODP</button>
+        </div>
+        <table id="table-odp">
+            <thead>
+                <tr>
+                    <th>ODP</th>
+                    <th>Lokasi</th>
+                    <th style="width: 250px;">Biaya (IDR)</th>
+                    <th style="width: 70px; text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" placeholder="Contoh: ODP-MIF-01"></td>
+                    <td><input type="text" placeholder="Lokasi Spesifik"></td>
+                    <td><input type="number" class="cost-input cost-odp" placeholder="0" value="0"></td>
+                    <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>[04] DATA ODC (Optical Distribution Cabinet)</h2>
+            <button class="btn btn-add" onclick="addRow('table-odc')">+ Tambah ODC</button>
+        </div>
+        <table id="table-odc">
+            <thead>
+                <tr>
+                    <th>ODC</th>
+                    <th>Lokasi</th>
+                    <th style="width: 250px;">Biaya (IDR)</th>
+                    <th style="width: 70px; text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" placeholder="Contoh: ODC-MAIN-01"></td>
+                    <td><input type="text" placeholder="Lokasi Pusat Sektor"></td>
+                    <td><input type="number" class="cost-input cost-odc" placeholder="0" value="0"></td>
+                    <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>[05] DATA RUMAH (TARGET PELANGGAN)</h2>
+            <button class="btn btn-add" onclick="addRow('table-rumah')">+ Tambah Rumah</button>
+        </div>
+        <table id="table-rumah">
+            <thead>
+                <tr>
+                    <th>Pemilik Rumah</th>
+                    <th>Lokasi / Alamat</th>
+                    <th style="width: 70px; text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" placeholder="Nama Pemilik"></td>
+                    <td><input type="text" placeholder="Nomor Rumah / Jalan"></td>
+                    <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-panel">
+        <div class="section-header">
+            <h2>[06] TIM PELAKSANA (YANG MENGERJAKAN)</h2>
+            <button class="btn btn-add" onclick="addRow('table-pekerja')">+ Tambah Pekerja</button>
+        </div>
+        <table id="table-pekerja">
+            <thead>
+                <tr>
+                    <th>Nama Personel / Tim Teknisi</th>
+                    <th style="width: 70px; text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" placeholder="Nama Lengkap Teknisi"></td>
+                    <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="summary-wrapper">
+        <div class="summary-title">// RINCIAN ESTIMASI ANGGARAN</div>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-card-label">Total Biaya Tiang</div>
+                <div class="summary-card-value" id="subtotal-tiang">Rp 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-label">Total Biaya Kabel</div>
+                <div class="summary-card-value" id="subtotal-kabel">Rp 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-label">Total Biaya ODP</div>
+                <div class="summary-card-value" id="subtotal-odp">Rp 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-label">Total Biaya ODC</div>
+                <div class="summary-card-value" id="subtotal-odc">Rp 0</div>
+            </div>
+        </div>
+
+        <div class="total-box">
+            <div class="total-label">TOTAL ANGGARAN KESELURUHAN:</div>
+            <div class="total-value" id="total-all">Rp 0</div>
+        </div>
+    </div>
+</div>
+
+<div class="action-bar">
+    <button class="btn btn-pdf" onclick="exportToPDF()">SIMPAN KE FILE PDF</button>
+    <button class="btn btn-reset" onclick="resetAllData()">RESET SEMUA DATA</button>
+</div>
+
+<script>
+    const today = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    
+    function addRow(tableId, values = null) {
+        const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+        let baseRow;
+        if (table.rows.length > 0) {
+            baseRow = table.rows[0];
+        } else {
+            reloadTableTemplate(tableId);
+            return;
+        }
+
+        const newRow = baseRow.cloneNode(true);
+        const inputs = newRow.getElementsByTagName('input');
+        
+        for (let i = 0; i < inputs.length; i++) {
+            if (values && values[i] !== undefined) {
+                inputs[i].value = values[i];
+            } else {
+                inputs[i].value = (inputs[i].type === 'number') ? "0" : "";
+            }
+        }
+        
+        table.appendChild(newRow);
+        calculateBudget();
+        saveToLocalStorage();
+    }
+
+    function reloadTableTemplate(tableId) {
+        localStorage.removeItem('ftth_planner_data');
+        location.reload();
+    }
+
+    function deleteRow(button) {
+        const row = button.parentNode.parentNode;
+        const tbody = row.parentNode;
+        if (tbody.rows.length > 1) {
+            tbody.removeChild(row);
+        } else {
+            const inputs = row.getElementsByTagName('input');
+            for(let i=0; i<inputs.length; i++) {
+                inputs[i].value = (inputs[i].type === 'number') ? "0" : "";
+            }
+        }
+        calculateBudget();
+        saveToLocalStorage();
+    }
+
+    function sumCategory(className) {
+        let subtotal = 0;
+        const inputs = document.querySelectorAll('.' + className);
+        inputs.forEach(input => {
+            const val = parseFloat(input.value) || 0;
+            subtotal += val;
+        });
+        return subtotal;
+    }
+
+    function formatRupiah(amount) {
+        return "Rp " + amount.toLocaleString('id-ID');
+    }
+
+    function calculateBudget() {
+        const totalTiang = sumCategory('cost-tiang');
+        const totalKabel = sumCategory('cost-kabel');
+        const totalOdp = sumCategory('cost-odp');
+        const totalOdc = sumCategory('cost-odc');
+
+        document.getElementById('subtotal-tiang').innerText = formatRupiah(totalTiang);
+        document.getElementById('subtotal-kabel').innerText = formatRupiah(totalKabel);
+        document.getElementById('subtotal-odp').innerText = formatRupiah(totalOdp);
+        document.getElementById('subtotal-odc').innerText = formatRupiah(totalOdc);
+
+        const grandTotal = totalTiang + totalKabel + totalOdp + totalOdc;
+        document.getElementById('total-all').innerText = formatRupiah(grandTotal);
+    }
+
+    function saveToLocalStorage() {
+        const appData = {
+            pembuat: document.getElementById('pembuat').value,
+            tanggal: document.getElementById('tanggal').value,
+            tables: {}
+        };
+
+        const tableIds = ['table-tiang', 'table-kabel', 'table-odp', 'table-odc', 'table-rumah', 'table-pekerja'];
+        
+        tableIds.forEach(id => {
+            appData.tables[id] = [];
+            const rows = document.getElementById(id).querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const rowData = [];
+                const inputs = row.querySelectorAll('input');
+                inputs.forEach(input => {
+                    rowData.push(input.value);
+                });
+                if (rowData.length > 0) {
+                    appData.tables[id].push(rowData);
+                }
+            });
+        });
+
+        localStorage.setItem('ftth_planner_data', JSON.stringify(appData));
+    }
+
+    function loadFromLocalStorage() {
+        const savedData = localStorage.getItem('ftth_planner_data');
+        if (!savedData) {
+            document.getElementById('tanggal').value = today.toLocaleDateString('id-ID', options);
+            saveToLocalStorage();
+            return;
+        }
+
+        const appData = JSON.parse(savedData);
+        document.getElementById('pembuat').value = appData.pembuat || "Miftakhul";
+        document.getElementById('tanggal').value = appData.tanggal || today.toLocaleDateString('id-ID', options);
+
+        for (const [tableId, rowsData] of Object.entries(appData.tables)) {
+            const tbody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+            
+            if (rowsData.length > 0) {
+                tbody.innerHTML = '';
+            }
+
+            rowsData.forEach((rowData) => {
+                let htmlRow = '';
+                if(tableId === 'table-tiang') {
+                    htmlRow = `<tr>
+                        <td><input type="text" placeholder="Contoh: TNG-01" value="${rowData[0] || ''}"></td>
+                        <td><input type="text" placeholder="Koordinat / Nama Jalan" value="${rowData[1] || ''}"></td>
+                        <td><input type="number" class="cost-input cost-tiang" placeholder="0" value="${rowData[2] || '0'}"></td>
+                        <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                    </tr>`;
+                } else if(tableId === 'table-kabel') {
+                    htmlRow = `<tr>
+                        <td><input type="text" placeholder="Contoh: FO-24C-CORE" value="${rowData[0] || ''}"></td>
+                        <td><input type="text" placeholder="Contoh: Tiang 01 - Tiang 05" value="${rowData[1] || ''}"></td>
+                        <td><input type="number" placeholder="0" value="${rowData[2] || '0'}"></td>
+                        <td><input type="number" class="cost-input cost-kabel" placeholder="0" value="${rowData[3] || '0'}"></td>
+                        <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                    </tr>`;
+                } else if(tableId === 'table-odp' || tableId === 'table-odc') {
+                    const prefix = tableId === 'table-odp' ? 'odp' : 'odc';
+                    const example = tableId === 'table-odp' ? 'ODP-MIF-01' : 'ODC-MAIN-01';
+                    htmlRow = `<tr>
+                        <td><input type="text" placeholder="Contoh: ${example}" value="${rowData[0] || ''}"></td>
+                        <td><input type="text" placeholder="Lokasi" value="${rowData[1] || ''}"></td>
+                        <td><input type="number" class="cost-input cost-${prefix}" placeholder="0" value="${rowData[2] || '0'}"></td>
+                        <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                    </tr>`;
+                } else if(tableId === 'table-rumah') {
+                    htmlRow = `<tr>
+                        <td><input type="text" placeholder="Nama Pemilik" value="${rowData[0] || ''}"></td>
+                        <td><input type="text" placeholder="Nomor Rumah / Jalan" value="${rowData[1] || ''}"></td>
+                        <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                    </tr>`;
+                } else if(tableId === 'table-pekerja') {
+                    htmlRow = `<tr>
+                        <td><input type="text" placeholder="Nama Lengkap Teknisi" value="${rowData[0] || ''}"></td>
+                        <td style="text-align: center;"><button class="btn btn-delete" onclick="deleteRow(this)">X</button></td>
+                    </tr>`;
+                }
+
+                if (htmlRow) {
+                    tbody.insertAdjacentHTML('beforeend', htmlRow);
+                }
+            });
+        }
+        calculateBudget();
+    }
+
+    function resetAllData() {
+        if(confirm("Apakah Anda yakin ingin menghapus semua data perencanaan ini?")) {
+            localStorage.removeItem('ftth_planner_data');
+            location.reload();
+        }
+    }
+
+    document.getElementById('planner-app').addEventListener('input', function() {
+        calculateBudget();
+        saveToLocalStorage();
+    });
+
+    /* --- FUNGSI UTAMA EXPORT PDF (FIXED BUG TERPOTONG) --- */
+    function exportToPDF() {
+        const element = document.getElementById('planner-app');
+        const allInputs = element.querySelectorAll('input');
+        
+        allInputs.forEach(input => {
+            input.setAttribute('value', input.value);
+        });
+
+        element.classList.add('print-mode');
+        document.body.style.background = '#ffffff';
+        
+        const originalElementStyle = element.style.cssText;
+        element.style.height = 'auto';
+        element.style.overflow = 'visible';
+
+        const opt = {
+            margin:       [10, 10, 10, 10],
+            filename:     'Perencanaan_FTTH_Miftakhul.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true,
+                scrollY: 0,
+                windowHeight: element.scrollHeight // Membaca tinggi dinamis seluruh data tabel
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            element.classList.remove('print-mode');
+            element.style.cssText = originalElementStyle;
+            document.body.style.background = '';
+        }).catch(err => {
+            console.error(err);
+            element.classList.remove('print-mode');
+            element.style.cssText = originalElementStyle;
+            document.body.style.background = '';
+        });
+    }
+
+    window.onload = function() {
+        loadFromLocalStorage();
+    };
+</script>
+
+</body>
+</html>
